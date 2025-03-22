@@ -10,6 +10,7 @@ RUN mkdir /code
 WORKDIR /code
 ADD requirements/* /code/
 RUN pip install -r prod.txt
+RUN pip install -r dev.txt
 
 ADD . /code
 

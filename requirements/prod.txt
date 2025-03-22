@@ -5,3 +5,22 @@ django-storages==1.7.1
 python-memcached==1.59
 raven==6.10.0
 uWSGI==2.0.19.1
+# Include common dependencies
+
+# -r common.txt
+
+# # AWS SDK for Python (Boto3)
+# boto3==1.26.0
+
+# # Django storage backends
+# django-storages==1.14.5
+
+# # Memcached client
+# python-memcached==1.59
+
+# # Sentry SDK for error tracking
+# sentry-sdk==1.10.0
+
+# uWSGI application server
+# uWSGI==2.0.28
+
