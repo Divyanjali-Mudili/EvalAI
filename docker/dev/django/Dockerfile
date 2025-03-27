@@ -1,32 +1,13 @@
-# FROM python:3.10 
-
-# ENV PYTHONUNBUFFERED 1
-# WORKDIR /code
-
-# # Copy requirements first (for efficient Docker layer caching)
-# ADD requirements/* /code/
-
-
-# # Upgrade pip, setuptools, and wheel to avoid installation issues
-# RUN pip install --upgrade pip setuptools wheel && pip install cython && apt-get update && apt-get install -y build-essential python3-dev
-# RUN pip install --no-cache-dir --only-binary=:all: PyYAML
-
-# # Install remaining dependencies
-# RUN pip install -r dev.txt
-
-# # Start the application with dependency checks
-# CMD ["./docker/wait-for-it.sh", "db:5432", "--", "sh", "/code/docker/dev/django/container-start.sh"]
-
-
-
-FROM python:3.9
+FROM python:3.9.21
 
 ENV PYTHONUNBUFFERED 1
+ENV PIP_NO_CACHE_DIR=off
+ENV PIP_DISABLE_PIP_VERSION_CHECK=on
 
 RUN mkdir /code
 WORKDIR /code
 
-ADD requirements/* /code/
+ADD requirements/* /code/ 
 RUN apt-get update && apt-get install -y \
     build-essential \
     python3-dev \
@@ -48,7 +29,7 @@ RUN apt-get update && \
 
 RUN apt-get update && apt-get install -y \
     python3-dev gcc build-essential libssl-dev libpcre3-dev libsystemd-dev libffi-dev && apt-get update && apt-get install -y build-essential python3-dev libpcre3 libpcre3-dev
-RUN pip install -r dev.txt
+RUN pip install --no-cache-dir --no-compile --progress-bar off -r dev.txt
 CMD ["./docker/wait-for-it.sh", "db:5432", "--", "sh", "/code/docker/dev/django/container-start.sh"]
 
 # pip install --no-cache-dir "uwsgi<2.0.21" || echo "uWSGI install failed, skipping" && 
