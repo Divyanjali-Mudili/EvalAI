@@ -25,18 +25,18 @@ export class ChallengeleaderboardComponent implements OnInit, AfterViewInit, OnD
   /**
    * Phase select card components
    */
-  @ViewChildren('phasesplitselect')
-  components: QueryList<SelectphaseComponent>;
+  @ViewChildren('phasesplitselect') components: QueryList<any>;
 
   /**
    * Leaderboard precision value
    */
-  leaderboardPrecisionValue = 2;
+  leaderboardPrecisionValue: number = 2;
 
   /**
    * Set leaderboard precision value
    */
-  setLeaderboardPrecisionValue = '1.2-2';
+  setLeaderboardPrecisionValue = '1.2-2'; 
+  
 
   /**
    * Challenge phase split ID
@@ -101,7 +101,8 @@ export class ChallengeleaderboardComponent implements OnInit, AfterViewInit, OnD
   /**
    * Leaderboard entries list
    */
-  leaderboard = [];
+  leaderboardsMap: Map<number, any[]> = new Map();
+
 
   /**
    * Show leaderboard updates
@@ -117,6 +118,13 @@ export class ChallengeleaderboardComponent implements OnInit, AfterViewInit, OnD
    * Currently selected phase split's id
    */
   selectedPhaseSplitId: any = null;
+
+  /**
+ * Currently selected phase split IDs (multiple)
+ */
+  selectedPhaseSplitIds: number[] = [];
+
+
 
   /**
    * Currently selected phase split
@@ -213,6 +221,11 @@ export class ChallengeleaderboardComponent implements OnInit, AfterViewInit, OnD
   selectedMetric: any = '';
 
   /**
+ * Selected metrics to display
+ */
+  selectedMetrics: string[] = [];
+
+  /**
    * Constructor.
    * @param authService  AuthService Injection.
    * @param router  Router Injection.
@@ -270,19 +283,44 @@ export class ChallengeleaderboardComponent implements OnInit, AfterViewInit, OnD
   filterPhases() {
     if (this.phases.length > 0 && this.phaseSplits.length > 0) {
       for (let i = 0; i < this.phaseSplits.length; i++) {
-        if (this.phaseSplits[i].visibility !== this.challengePhaseVisibility.public) {
-          this.phaseSplits[i].showPrivate = true;
-          this.showPrivateIds.push(this.phaseSplits[i].id);
+        const phase = this.phaseSplits[i];
+  
+        // Ensure each phase has a 'checked' property for UI binding
+        phase.checked = this.selectedPhaseSplitIds.includes(phase.id);
+  
+        if (phase.visibility !== this.challengePhaseVisibility.public) {
+          phase.showPrivate = true;
+          this.showPrivateIds.push(phase.id);
         } else {
-          this.phaseSplits[i].showPrivate = false;
+          phase.showPrivate = false;
         }
       }
+  
       this.filteredPhaseSplits = this.phaseSplits;
+  
+      // Proceed with URL param check
       setTimeout(() => {
         this.checkUrlParams();
       }, 100);
     }
-  }
+  }  
+
+  // filterPhases() {
+  //   if (this.phases.length > 0 && this.phaseSplits.length > 0) {
+  //     for (let i = 0; i < this.phaseSplits.length; i++) {
+  //       if (this.phaseSplits[i].visibility !== this.challengePhaseVisibility.public) {
+  //         this.phaseSplits[i].showPrivate = true;
+  //         this.showPrivateIds.push(this.phaseSplits[i].id);
+  //       } else {
+  //         this.phaseSplits[i].showPrivate = false;
+  //       }
+  //     }
+  //     this.filteredPhaseSplits = this.phaseSplits;
+  //     setTimeout(() => {
+  //       this.checkUrlParams();
+  //     }, 100);
+  //   }
+  // }
 
   /**
    * Called after filtering phases to check URL for phase-split-id and highlighted-leaderboard-entry
@@ -290,11 +328,11 @@ export class ChallengeleaderboardComponent implements OnInit, AfterViewInit, OnD
   checkUrlParams() {
     this.route.params.subscribe((params) => {
       if (params['split']) {
-        this.selectedPhaseSplitId = params['split'];
+        this.selectedPhaseSplitIds = params['split'];
         if (params.hasOwnProperty("metricName")) {
           this.selectedMetric = decodeURIComponent(params["metricName"]);
         }
-        this.selectPhaseSplitId(this.selectedPhaseSplitId, this);
+        this.selectPhaseSplitId(this.selectedPhaseSplitIds, this);
       }
     });
   }
@@ -348,11 +386,12 @@ export class ChallengeleaderboardComponent implements OnInit, AfterViewInit, OnD
     }
   };
 
+
   /**
    * This is called when a metric is selected (from child components)
    * Updates the router URL with phase-split-id and  metric name
    */
-   selectedMetricUrlChange = (phaseSplit, metricName) => {
+  selectedMetricUrlChange = (phaseSplit, metricName) => {
     const SELF = this;
     this.selectedMetric = metricName;
     if (SELF.router.url.endsWith('leaderboard')) {
@@ -432,22 +471,51 @@ export class ChallengeleaderboardComponent implements OnInit, AfterViewInit, OnD
   /**
    * Sort leaderboard entries wrapper
    */
-  sortLeaderboard() {
-    this.leaderboard = this.leaderboard.sort((obj1, obj2) => {
+
+  sortLeaderboard(phaseSplitId: number) {
+    const sorted = (this.leaderboardsMap.get(phaseSplitId) || []).slice().sort((obj1, obj2) => {
       const RET1 = this.sortFunction(obj1);
       const RET2 = this.sortFunction(obj2);
-      if (RET1 > RET2) {
-        return 1;
-      }
-      if (RET2 > RET1) {
-        return -1;
-      }
+      return this.reverseSort ? RET2 - RET1 : RET1 - RET2;
+    });
+    this.leaderboardsMap.set(phaseSplitId, sorted);
+  }
+  
+  // sortLeaderboard() {
+  //   this.leaderboard = this.leaderboard.sort((obj1, obj2) => {
+  //     const RET1 = this.sortFunction(obj1);
+  //     const RET2 = this.sortFunction(obj2);
+  //     if (RET1 > RET2) {
+  //       return 1;
+  //     }
+  //     if (RET2 > RET1) {
+  //       return -1;
+  //     }
+  //     return 0;
+  //   });
+  //   if (this.reverseSort) {
+  //     this.leaderboard = this.leaderboard.reverse();
+  //   }
+  // }
+
+  sortLeaderboardForPhase(phaseSplitId: number) {
+    const leaderboard = this.leaderboardsMap.get(phaseSplitId) || [];
+    leaderboard.sort((a, b) => {
+      const valA = this.sortFunction(a);
+      const valB = this.sortFunction(b);
+      if (valA > valB) return 1;
+      if (valA < valB) return -1;
       return 0;
     });
+  
     if (this.reverseSort) {
-      this.leaderboard = this.leaderboard.reverse();
+      leaderboard.reverse();
     }
+  
+    this.leaderboardsMap.set(phaseSplitId, leaderboard);
   }
+  
+
 
   /**
    * Sort function for leaderboard.
@@ -470,7 +538,7 @@ export class ChallengeleaderboardComponent implements OnInit, AfterViewInit, OnD
    * Sort the rank and participant team leaderboard column
    * @param sortColumn sort column ('rank' or 'string')
    */
-  sortNonMetricsColumn(sortColumn) {
+  sortNonMetricsColumn(sortColumn: string, phaseSplitId: number) {
     const SELF = this;
     if (SELF.sortColumn === sortColumn) {
       SELF.reverseSort = !SELF.reverseSort;
@@ -478,14 +546,26 @@ export class ChallengeleaderboardComponent implements OnInit, AfterViewInit, OnD
       SELF.reverseSort = false;
     }
     SELF.sortColumn = sortColumn;
-    SELF.sortLeaderboard();
+    SELF.sortLeaderboard(phaseSplitId); // ✅ Pass phaseSplitId
   }
+  
+
+  // sortNonMetricsColumn(sortColumn) {
+  //   const SELF = this;
+  //   if (SELF.sortColumn === sortColumn) {
+  //     SELF.reverseSort = !SELF.reverseSort;
+  //   } else {
+  //     SELF.reverseSort = false;
+  //   }
+  //   SELF.sortColumn = sortColumn;
+  //   SELF.sortLeaderboard();
+  // }
 
   /**
    * To sort by the metrics column
    * @param index Schema labels index
    */
-  sortMetricsColumn(index) {
+  sortMetricsColumn(index: number, phaseSplitId: number) {
     const SELF = this;
     if (SELF.sortColumn === 'number' && SELF.columnIndexSort === index) {
       SELF.reverseSort = !SELF.reverseSort;
@@ -494,51 +574,135 @@ export class ChallengeleaderboardComponent implements OnInit, AfterViewInit, OnD
     }
     SELF.sortColumn = 'number';
     SELF.columnIndexSort = index;
-    SELF.sortLeaderboard();
+    SELF.sortLeaderboard(phaseSplitId); // ✅ Pass phaseSplitId to fix the error
   }
+  
+
+  // sortMetricsColumn(index) {
+  //   const SELF = this;
+  //   if (SELF.sortColumn === 'number' && SELF.columnIndexSort === index) {
+  //     SELF.reverseSort = !SELF.reverseSort;
+  //   } else {
+  //     SELF.reverseSort = false;
+  //   }
+  //   SELF.sortColumn = 'number';
+  //   SELF.columnIndexSort = index;
+  //   SELF.sortLeaderboard();
+  // }
 
   /**
    * Fetch leaderboard for a phase split
    * @param phaseSplitId id of the phase split
-   */
-  fetchLeaderboard(phaseSplitId, metricName) {
-    const API_PATH = this.endpointsService.challengeLeaderboardURL(phaseSplitId, metricName);
-    const SELF = this;
-    SELF.showPrivateIds.forEach((id) => {
-      id === phaseSplitId ? (SELF.showLeaderboardToggle = false) : (SELF.showLeaderboardToggle = true);
-    });
-    clearInterval(SELF.pollingInterval);
-    SELF.leaderboard = [];
-    SELF.showLeaderboardUpdate = false;
+  */
+  fetchLeaderboard(phaseSplitId: number, metricName: string) {
+    const API_PATH = this.endpointsService.challengeLeaderboardURL(
+      phaseSplitId,
+      metricName,
+      this.selectedMetrics
+    );
+  
     this.apiService.getUrl(API_PATH).subscribe(
       (data) => {
-        SELF.numberOfAllEntries = data['count'];
-        SELF.updateLeaderboardResults(data['results'], SELF);
-        SELF.startLeaderboard(phaseSplitId, metricName);
+        this.leaderboardsMap.set(phaseSplitId, data['results']);
+        this.sortLeaderboardForPhase(phaseSplitId); // Optional: if sorting per phase
+        this.startLeaderboard(phaseSplitId, metricName);
       },
       (err) => {
-        SELF.globalService.handleApiError(err);
+        this.globalService.handleApiError(err);
       },
-      () => {}
+      () => {} // 👈 empty complete handler to satisfy the 3rd argument
     );
   }
+
+
+  // fetchLeaderboard(phaseSplitId: number, metricName: string) {
+  //   const API_PATH = this.endpointsService.challengeLeaderboardURL(
+  //     phaseSplitId,
+  //     metricName,
+  //     this.selectedMetrics
+  //   );
+  
+  //   this.apiService.getUrl(API_PATH).subscribe(
+  //     (data) => {
+  //       this.leaderboardsMap.set(phaseSplitId, data['results']);
+  //       this.sortLeaderboardForPhase(phaseSplitId); // New helper
+  //       this.startLeaderboard(phaseSplitId, metricName);
+  //     },
+  //     (err) => {
+  //       this.globalService.handleApiError(err);
+  //     }
+  //   );
+  // }
+    
+  
+
+
+  // fetchLeaderboard(phaseSplitId, metricName) {
+  //   const API_PATH = this.endpointsService.challengeLeaderboardURL(phaseSplitId, metricName);
+  //   const SELF = this;
+  //   SELF.showPrivateIds.forEach((id) => {
+  //     id === phaseSplitId ? (SELF.showLeaderboardToggle = false) : (SELF.showLeaderboardToggle = true);
+  //   });
+  //   clearInterval(SELF.pollingInterval);
+  //   SELF.leaderboard = [];
+  //   SELF.showLeaderboardUpdate = false;
+  //   this.apiService.getUrl(API_PATH).subscribe(
+  //     (data) => {
+  //       SELF.numberOfAllEntries = data['count'];
+  //       SELF.updateLeaderboardResults(data['results'], SELF);
+  //       SELF.startLeaderboard(phaseSplitId, metricName);
+  //     },
+  //     (err) => {
+  //       SELF.globalService.handleApiError(err);
+  //     },
+  //     () => {}
+  //   );
+  // }
+
+  onMetricSelectionChange(selected: string[]) {
+    this.selectedMetrics = selected;
+  
+    // Loop through all selected phaseSplitIds instead of just one
+    for (let phaseSplitId of this.selectedPhaseSplitIds) {
+      this.fetchLeaderboard(phaseSplitId, this.selectedMetric);
+    }
+  }
+  
+  
+  /**
+ * Called when a new phase split is selected by the user
+ * Adds it to the selected list and fetches leaderboard
+ */
+onPhaseSelectionChange(phaseSplitId: number): void {
+  if (!this.selectedPhaseSplitIds.includes(phaseSplitId)) {
+    this.selectedPhaseSplitIds.push(phaseSplitId);
+    this.fetchLeaderboard(phaseSplitId, this.selectedMetric);
+  }
+}
+
 
   /**
    * Fetch complete leaderboard for a phase split public/private
    * @param phaseSplitId id of the phase split
    */
-  fetchAllEnteriesOnPublicLeaderboard(phaseSplitId, metricName) {
+
+  fetchAllEnteriesOnPublicLeaderboard(phaseSplitId: number, metricName: string) {
     const API_PATH = this.endpointsService.challengeCompleteLeaderboardURL(phaseSplitId, metricName);
     const SELF = this;
     clearInterval(SELF.pollingInterval);
-    SELF.leaderboard = [];
+    
+    // Clear specific leaderboard phase entry
+    SELF.leaderboardsMap.set(phaseSplitId, []);
     SELF.showLeaderboardUpdate = false;
+  
     this.apiService.getUrl(API_PATH).subscribe(
       (data) => {
         SELF.numberOfAllEntries = data['count'];
-        this.challengePhaseSplitId = data.results[0].challenge_phase_split;
-        SELF.updateLeaderboardResults(data['results'], SELF);
-        SELF.updateLeaderboardResults(data['results'], SELF);
+  
+        // Set leaderboard results to the map for the given phase
+        SELF.leaderboardsMap.set(phaseSplitId, data['results']);
+  
+        // Start polling this leaderboard
         SELF.startLeaderboard(phaseSplitId, metricName);
       },
       (err) => {
@@ -547,25 +711,71 @@ export class ChallengeleaderboardComponent implements OnInit, AfterViewInit, OnD
       () => {}
     );
   }
+  
+
+  // fetchAllEnteriesOnPublicLeaderboard(phaseSplitId, metricName) {
+  //   const API_PATH = this.endpointsService.challengeCompleteLeaderboardURL(phaseSplitId, metricName);
+  //   const SELF = this;
+  //   clearInterval(SELF.pollingInterval);
+  //   SELF.leaderboard = [];
+  //   SELF.showLeaderboardUpdate = false;
+  //   this.apiService.getUrl(API_PATH).subscribe(
+  //     (data) => {
+  //       SELF.numberOfAllEntries = data['count'];
+  //       this.challengePhaseSplitId = data.results[0].challenge_phase_split;
+  //       SELF.updateLeaderboardResults(data['results'], SELF);
+  //       SELF.updateLeaderboardResults(data['results'], SELF);
+  //       SELF.startLeaderboard(phaseSplitId, metricName);
+  //     },
+  //     (err) => {
+  //       SELF.globalService.handleApiError(err);
+  //     },
+  //     () => {}
+  //   );
+  // }
 
   /**
    * function for toggeling between public leaderboard and complete leaderboard [public/private]
    */
+
   toggleLeaderboard(getAllEntries) {
     this.getAllEntries = getAllEntries;
+  
     if (getAllEntries) {
       this.getAllEntriesTextOption = 'Exclude private submissions';
-      this.fetchAllEnteriesOnPublicLeaderboard(this.selectedPhaseSplitId, this.selectedMetric);
+  
+      // Loop through all selected phase splits for fetching complete leaderboard
+      for (let phaseSplitId of this.selectedPhaseSplitIds) {
+        this.fetchAllEnteriesOnPublicLeaderboard(phaseSplitId, this.selectedMetric);
+      }
+  
     } else {
       this.getAllEntriesTextOption = 'Include private submissions';
-      this.fetchLeaderboard(this.selectedPhaseSplitId, this.selectedMetric);
+  
+      // Loop through all selected phase splits for normal leaderboard
+      for (let phaseSplitId of this.selectedPhaseSplitIds) {
+        this.fetchLeaderboard(phaseSplitId, this.selectedMetric);
+      }
     }
   }
+  
+
+  // toggleLeaderboard(getAllEntries) {
+  //   this.getAllEntries = getAllEntries;
+  //   if (getAllEntries) {
+  //     this.getAllEntriesTextOption = 'Exclude private submissions';
+  //     this.fetchAllEnteriesOnPublicLeaderboard(this.selectedPhaseSplitIds, this.selectedMetric);
+  //   } else {
+  //     this.getAllEntriesTextOption = 'Include private submissions';
+  //     this.fetchLeaderboard(this.selectedPhaseSplitId, this.selectedMetric);
+  //   }
+  // }
 
   /**
    * Call leaderboard API in the interval of 5 seconds
    * @param phaseSplitId id of the phase split
    */
+
   startLeaderboard(phaseSplitId, metricName) {
     let API_PATH;
     if (this.getAllEntriesTextOption === 'Exclude private submissions') {
@@ -573,42 +783,100 @@ export class ChallengeleaderboardComponent implements OnInit, AfterViewInit, OnD
     } else {
       API_PATH = this.endpointsService.challengeLeaderboardURL(phaseSplitId, metricName);
     }
+  
     const SELF = this;
     clearInterval(SELF.pollingInterval);
-    SELF.pollingInterval = setInterval(function () {
+  
+    SELF.pollingInterval = setInterval(() => {
       SELF.apiService.getUrl(API_PATH, true, false).subscribe(
         (data) => {
-          if (SELF.leaderboard.length !== data['results'].length) {
+          const currentLeaderboard = SELF.leaderboardsMap.get(phaseSplitId) || [];
+          if (currentLeaderboard.length !== data['results'].length) {
             SELF.showLeaderboardUpdate = true;
           }
+  
+          // ✅ Optionally update leaderboard cache
+          SELF.leaderboardsMap.set(phaseSplitId, data['results']);
         },
         (err) => {
           SELF.globalService.handleApiError(err);
         },
-        () => {}
+        () => {
+          // ✅ Complete callback (even if empty)
+        }
       );
     }, 60000);
   }
+  
+  
+
+  // startLeaderboard(phaseSplitId, metricName) {
+  //   let API_PATH;
+  //   if (this.getAllEntriesTextOption === 'Exclude private submissions') {
+  //     API_PATH = this.endpointsService.challengeCompleteLeaderboardURL(phaseSplitId, metricName);
+  //   } else {
+  //     API_PATH = this.endpointsService.challengeLeaderboardURL(phaseSplitId, metricName);
+  //   }
+  //   const SELF = this;
+  //   clearInterval(SELF.pollingInterval);
+  //   SELF.pollingInterval = setInterval(function () {
+  //     SELF.apiService.getUrl(API_PATH, true, false).subscribe(
+  //       (data) => {
+  //         if (SELF.leaderboard.length !== data['results'].length) {
+  //           SELF.showLeaderboardUpdate = true;
+  //         }
+  //       },
+  //       (err) => {
+  //         SELF.globalService.handleApiError(err);
+  //       },
+  //       () => {}
+  //     );
+  //   }, 60000);
+  // }
 
   /**
    * Refresh leaderboard if there is any update in data
    */
+
   refreshLeaderboard() {
-    const API_PATH = this.endpointsService.challengeLeaderboardURL(this.selectedPhaseSplit['id'], this.selectedMetric);
-    const SELF = this;
-    SELF.leaderboard = [];
-    SELF.showLeaderboardUpdate = false;
-    SELF.apiService.getUrl(API_PATH).subscribe(
-      (data) => {
-        SELF.updateLeaderboardResults(data['results'], SELF);
-        SELF.startLeaderboard(SELF.selectedPhaseSplit['id'], SELF.selectedMetric);
-      },
-      (err) => {
-        SELF.globalService.handleApiError(err);
-      },
-      () => {}
-    );
+    this.showLeaderboardUpdate = false;
+  
+    for (const phaseSplitId of this.selectedPhaseSplitIds) {
+      const API_PATH = this.endpointsService.challengeLeaderboardURL(phaseSplitId, this.selectedMetric);
+  
+      this.apiService.getUrl(API_PATH).subscribe(
+        (data) => {
+          this.leaderboardsMap.set(phaseSplitId, data['results']);
+          this.startLeaderboard(phaseSplitId, this.selectedMetric);
+        },
+        (err) => {
+          this.globalService.handleApiError(err);
+        },
+        () => {
+          // Optional: complete handler
+        }
+      );
+    }
   }
+  
+  
+
+  // refreshLeaderboard() {
+  //   const API_PATH = this.endpointsService.challengeLeaderboardURL(this.selectedPhaseSplit['id'], this.selectedMetric);
+  //   const SELF = this;
+  //   SELF.leaderboard = [];
+  //   SELF.showLeaderboardUpdate = false;
+  //   SELF.apiService.getUrl(API_PATH).subscribe(
+  //     (data) => {
+  //       SELF.updateLeaderboardResults(data['results'], SELF);
+  //       SELF.startLeaderboard(SELF.selectedPhaseSplit['id'], SELF.selectedMetric);
+  //     },
+  //     (err) => {
+  //       SELF.globalService.handleApiError(err);
+  //     },
+  //     () => {}
+  //   );
+  // }
 
   showLeaderboardByLatestOrBest() {
     const API_PATH = this.endpointsService.particularChallengePhaseSplitUrl(this.selectedPhaseSplit['id']);
@@ -657,7 +925,11 @@ export class ChallengeleaderboardComponent implements OnInit, AfterViewInit, OnD
     SELF.openDialog(SELF.metaAttributesData);
   }
 
-  encodeMetricURI(metric) {
+  // encodeMetricURI(metric) {
+  //   return encodeURIComponent(metric);
+  // }
+
+  encodeMetricURI = (metric: string): string => {
     return encodeURIComponent(metric);
   };
 
@@ -674,37 +946,83 @@ export class ChallengeleaderboardComponent implements OnInit, AfterViewInit, OnD
   /**
    *  Fetch leaderboard metric order by flag
    */
-  isMetricOrderedAscending(metric) {
-    const SELF = this;
-    let schema = SELF.leaderboard[0].leaderboard__schema;
-    let metadata = schema.metadata;
-    if (metadata != null && metadata != undefined) {
-        // By default all metrics are considered higher is better
-        if (metadata[metric] == undefined) {
-            return true;
-        }
-        return metadata[metric].sort_ascending;
+  isMetricOrderedAscending(phaseSplitId: number, metric: string): boolean {
+    const leaderboard = this.leaderboardsMap.get(phaseSplitId);
+    if (!leaderboard || leaderboard.length === 0) return true;
+  
+    const schema = leaderboard[0].leaderboard__schema;
+    // const metadata = schema?.metadata;
+    const metadata = schema && schema.metadata;
+  
+    if (metadata && metadata[metric]) {
+      return metadata[metric].sort_ascending;
     }
-    // By default all metrics are considered higher is better
+  
+    // By default, assume higher is better
     return true;
-  };
+  }
+
+  // isMetricOrderedAscending(metric) {
+  //   const SELF = this;
+  //   let schema = SELF.leaderboard[0].leaderboard__schema;
+  //   let metadata = schema.metadata;
+  //   if (metadata != null && metadata != undefined) {
+  //       // By default all metrics are considered higher is better
+  //       if (metadata[metric] == undefined) {
+  //           return true;
+  //       }
+  //       return metadata[metric].sort_ascending;
+  //   }
+  //   // By default all metrics are considered higher is better
+  //   return true;
+  // };  
+  
+  // isMetricOrderedAscending(metric) {
+  //   const SELF = this;
+  //   let schema = SELF.leaderboard[0].leaderboard__schema;
+  //   let metadata = schema.metadata;
+  //   if (metadata != null && metadata != undefined) {
+  //       // By default all metrics are considered higher is better
+  //       if (metadata[metric] == undefined) {
+  //           return true;
+  //       }
+  //       return metadata[metric].sort_ascending;
+  //   }
+  //   // By default all metrics are considered higher is better
+  //   return true;
+  // };
 
   /**
    *  Fetch leaderboard metric description for tooltip
    */
-  getLabelDescription(metric) {
-      const SELF = this;
-      let schema = SELF.leaderboard[0].leaderboard__schema;
-      let metadata = schema.metadata;
-      if (metadata != null && metadata != undefined) {
-          // By default all metrics are considered higher is better
-          if (metadata[metric] == undefined || metadata[metric].description == undefined) {
-              return "";
-          }
-          return metadata[metric].description;
-      }
-      return "";
-  };
+  
+  getLabelDescription(phaseSplitId: number, metric: string): string {
+    const leaderboard = this.leaderboardsMap.get(phaseSplitId);
+    if (!leaderboard || leaderboard.length === 0) return "";
+    const schema = leaderboard[0].leaderboard__schema;
+    // const metadata = schema?.metadata;
+    const metadata = schema && schema.metadata;
+    if (metadata && metadata[metric] && metadata[metric].description) {
+      return metadata[metric].description;
+    }
+  
+    return "";
+  }
+  
+
+  // getLabelDescription(metric) {
+  //     const SELF = this;
+  //     let schema = SELF.leaderboard[0].leaderboard__schema;
+  //     let metadata = schema.metadata;
+  //     if (metadata != null && metadata != undefined) {
+  //         // By default all metrics are considered higher is better
+  //         if (metadata[metric] == undefined || metadata[metric].description == undefined) {
+  //             return "";
+  //         }
+  //         return metadata[metric].description;
+  //     }
+  //     return "";
+  // };
 
   /**
    *  Clear the polling interval

@@ -1,4 +1,5 @@
-@import 'styles/variables';
+@use 'src/styles/variables' as *;
+
 
 @media only screen and (max-width: $med-screen) {
   .web-container {
@@ -9,8 +10,6 @@
 .none {
   margin: 1%;
 }
-
-@import 'styles/variables';
 
 .ev-challenge-card {
   min-height: 415px;

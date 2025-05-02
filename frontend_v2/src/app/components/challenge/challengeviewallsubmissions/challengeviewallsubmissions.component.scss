@@ -1,8 +1,11 @@
-@import './variables.scss';
-@import './mixins.scss';
+@use 'src/styles/variables' as *;
+@use 'src/styles/mixins' as *;
+
+
 
 .ev-md-container {
   padding-bottom: 0px;
+
   .phase-title {
     margin-bottom: 20px;
   }
@@ -17,8 +20,8 @@
   background: #252833;
   text-align: center;
   color: white;
-  padding: 2px 5px 2px 5px;
-  border-radius: 3px 3px 3px 3px;
+  padding: 2px 5px;
+  border-radius: 3px;
   font-weight: $fw-light;
   transition: all 0.2s ease-in-out;
 }
@@ -65,8 +68,8 @@ tr.element-row:not(.expanded-row):hover {
 tr.element-row.expanded-row {
   cursor: pointer;
 }
-  
-.mat-table{
+
+.mat-table {
   border-collapse: separate;
 }
 
@@ -100,16 +103,14 @@ tr.element-row.expanded-row {
   overflow: hidden;
   display: flex;
   flex-direction: row;
-} 
+}
 
 .elements-detail {
   width: 40%;
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  border-right-style: solid;
-  border-right-width: 1px;
-  border-right-color: lightgrey;
+  border-right: 1px solid lightgrey;
   margin-left: 50px;
 }
 
@@ -126,9 +127,7 @@ tr.element-row.expanded-row {
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  border-right-style: solid;
-  border-right-width: 1px;
-  border-right-color: lightgrey;
+  border-right: 1px solid lightgrey;
   margin-left: 30px;
 }
 
@@ -159,20 +158,16 @@ tr.element-row.expanded-row {
   }
 
   .elements-status {
-    border-right-style: none;
+    border-right: none;
     margin-left: 0;
-    border-bottom-style: solid;
-    border-bottom-color: lightgrey;
-    border-bottom-width: 1px;
+    border-bottom: 1px solid lightgrey;
     padding-bottom: 20px;
   }
 
   .elements-detail {
-    border-right-style: none;
+    border-right: none;
     padding-right: 0;
-    border-bottom-style: solid;
-    border-bottom-color: lightgrey;
-    border-bottom-width: 1px;
+    border-bottom: 1px solid lightgrey;
     padding-bottom: 20px;
   }
 

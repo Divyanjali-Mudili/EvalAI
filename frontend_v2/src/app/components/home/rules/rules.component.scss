@@ -1,5 +1,5 @@
-@import './variables.scss';
-@import './mixins.scss';
+@use 'src/styles/variables' as *;
+@use 'src/styles/mixins' as *;
 
 .rules-container {
   margin-top: 200px;
@@ -17,7 +17,6 @@
   .rules-content {
     display: inline-block;
   }
-
   .rule-laptop {
     height: 300px;
     margin-top: 150px;
@@ -47,7 +46,6 @@
     letter-spacing: 0.5px;
   }
 }
-
 @include screen-medium {
   .rules-container {
     .rules-image {
@@ -59,7 +57,6 @@
     }
   }
 }
-
 @include screen-small {
   .rules-container {
     .rules-image {

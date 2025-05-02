@@ -1,5 +1,5 @@
-@import './variables.scss';
-@import './mixins.scss';
+@use 'src/styles/variables' as *;
+@use 'src/styles/mixins' as *;
 
 .input-group {
   width: 100%;
@@ -15,7 +15,6 @@
     color: $wild-blue;
     font-size: 0.9em;
   }
-
   input[type='text'] input[text='password'] {
     background-color: transparent;
     border: none;
@@ -31,7 +30,6 @@
     box-sizing: content-box;
     transition: all 0.3s;
   }
-
   .file-upload {
     margin-top: 16px;
     position: relative;
@@ -58,7 +56,6 @@
       position: relative;
     }
   }
-
   .file-field input[type='file'] {
     position: absolute;
     top: 0;
@@ -73,12 +70,10 @@
     opacity: 0;
     filter: alpha(opacity=0);
   }
-
   .file-field .file-path-wrapper {
     overflow: hidden;
     padding-left: 10px;
   }
-
   .file-path-wrapper input[type='text'] {
     background-color: transparent;
     border: none;
@@ -185,8 +180,8 @@
     display: block;
     width: 300px;
   }
-  &:before,
-  &:after {
+  &::before,
+  &::after {
     content: '';
     height: 2px;
     width: 0;
@@ -197,57 +192,45 @@
     -moz-transition: 0.2s ease all;
     -webkit-transition: 0.2s ease all;
   }
-  &:before {
+  &::before {
     left: 50%;
   }
-  &:after {
+  &::after {
     right: 50%;
   }
 }
-
 .zero-padding {
   top: 0px !important;
   left: 0px !important;
   position: relative !important;
 }
-
 ::ng-deep .owl-dt-timer-content .owl-dt-timer-input {
   margin: 0.2rem;
 }
-
 ::ng-deep .owl-dt-popup-container .owl-dt-calendar {
   height: 23.6em;
 }
 ::ng-deep .owl-dt-inline-container .owl-dt-calendar {
   height: 23.6em;
 }
-
 ::ng-deep .owl-dt-timer {
   padding: 0px;
-}
-
-/* media queries for rocket container */
+} /* media queries for rocket container */
 @media only screen and (max-width: $screen-sm-md) {
   .input-group {
     width: 100% !important;
   }
-
   .input-group input {
     width: 100% !important;
   }
-
   .input-group textarea {
     width: 100% !important;
   }
-}
-
-/* active state */
-
-.input-field:focus ~ .input-bar:before,
-.input-field:focus ~ .input-bar:after {
+} /* active state */
+.input-field:focus ~ .input-bar::before,
+.input-field:focus ~ .input-bar::after {
   width: 50%;
 }
-
 @include screen-small {
   .input-group {
     width: 250px;

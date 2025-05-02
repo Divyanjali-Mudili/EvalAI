@@ -232,9 +232,29 @@ export class EndpointsService {
    * Challenge Leaderboard fetch
    * @param phaseSplitId  phase split id
    */
-  challengeLeaderboardURL(phaseSplitId, orderByMetric) {
-    return `${this.jobs}challenge_phase_split/${phaseSplitId}/leaderboard/?page_size=1000&order_by=${orderByMetric}`;
+  // challengeLeaderboardURL(phaseSplitId, orderByMetric) {
+  //   return `${this.jobs}challenge_phase_split/${phaseSplitId}/leaderboard/?page_size=1000&order_by=${orderByMetric}`;
+  // }
+  
+  challengeLeaderboardURL(
+    phaseSplitId: number,
+    orderByMetric: string,
+    displayMetrics: string[] = []
+  ): string {
+    let url = `${this.jobs}challenge_phase_split/${phaseSplitId}/leaderboard/?page_size=1000`;
+  
+    if (orderByMetric) {
+      url += `&order_by=${orderByMetric}`;
+    }
+  
+    if (displayMetrics.length) {
+      url += `&display_metrics=${displayMetrics.join(',')}`;
+    }
+  
+    return url;
   }
+  
+  
 
   /**
    * Challenge Complete Leaderboard fetch for challenge host

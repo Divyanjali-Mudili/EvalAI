@@ -1,5 +1,6 @@
-@import './styles/variables.scss';
-@import './styles/mixins.scss';
+@use './styles/mixins.scss';
+@use 'src/styles/variables' as *;
+@use 'src/styles/mixins' as *;
 
 .privacy-container {
   width: 100%;
@@ -12,11 +13,9 @@
     bottom: 0;
     max-height: 600px !important;
     overflow-y: scroll;
-
     .privacy-nav {
       font-weight: $fw-semibold;
     }
-
     position: relative;
     position: -webkit-sticky;
     position: sticky;
@@ -33,12 +32,10 @@
         color: $gray-darker;
         font-size: $fs-16;
         font-weight: $fw-semibold;
-
         &:hover {
           border-left: 5px solid $gray-darker;
         }
       }
-
       li.scroll-selected {
         color: $orange;
         border-left: 5px solid $orange;
@@ -80,29 +77,25 @@
     }
   }
 }
-
 @include screen-small-medium {
   .privacy-nav-container,
   .privacy-empty-container {
     display: none;
   }
 }
-
 @include screen-medium {
   .privacy-nav-container {
     top: 20%;
   }
 }
-
 @include screen-medium {
   .privacy-container {
-    padding-top:100px !important;
+    padding-top: 100px !important;
   }
 }
-
 @include screen-large {
   .privacy-container {
-    padding-left:0;
+    padding-left: 0;
     padding-right: 0;
     margin-right: auto;
     margin-left: auto;

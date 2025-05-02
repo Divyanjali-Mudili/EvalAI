@@ -1,5 +1,6 @@
-@import './variables.scss';
-@import './mixins.scss';
+@use 'src/styles/variables' as *;
+@use 'src/styles/mixins' as *;
+
 
 #card_container {
   .card {
@@ -13,6 +14,7 @@
   font-weight: $fw-light;
   color: $gray-dark;
   margin: 30px;
+
   .dark {
     color: $gray-darker;
   }
@@ -40,6 +42,7 @@
   .change-password {
     margin-top: 25px;
     margin-bottom: 14px;
+
     .change-password-text {
       margin-right: 20px;
       margin-bottom: 12px;
@@ -57,20 +60,24 @@
     border: none !important;
     color: $red-light !important;
     font-size: $fs-24 !important;
+
     i {
       margin-left: -20px;
     }
+
     &:hover {
       box-shadow: none !important;
       color: $red-medium;
     }
   }
 }
+
 .modal-container {
   .modal-card {
     .title {
       margin-bottom: 20px;
     }
+
     .code-btn {
       margin-top: 15px;
     }
@@ -104,13 +111,16 @@
   left: -200px;
   text-align: center;
   color: #fff;
+
   ul {
     margin-top: 20px;
     text-align: left;
+
     li {
-      padding: 10px 0px;
+      padding: 10px 0;
     }
   }
+
   input[type='checkbox'] + label {
     font-size: 12px;
   }
@@ -141,6 +151,7 @@ img.profile-pic {
   li {
     margin-bottom: 36px;
   }
+
   margin-top: 20px;
 }
 
@@ -148,6 +159,7 @@ img.profile-pic {
   li {
     margin-bottom: 33px;
   }
+
   margin-bottom: 20px;
   margin-top: 25px;
 }
@@ -180,7 +192,7 @@ img.profile-pic {
 #card_container {
   padding: 40px;
   min-height: 100vh;
-  margin: 0px;
+  margin: 0;
 }
 
 #sty_card {
@@ -245,7 +257,7 @@ img.profile-pic {
 }
 
 #auth_token_input ::ng-deep .input-field {
-  padding-bottom: 0px;
+  padding-bottom: 0;
   height: 30px;
   width: 107%;
 }
@@ -269,6 +281,7 @@ img.profile-pic {
     padding-bottom: 3px;
     line-height: 16px;
   }
+
   @media (max-width: 1200px) {
     height: auto;
   }

@@ -1,4 +1,124 @@
-<div class="challenge-card">
+<div class="challenge-card">  
+  <div class="ev-card-panel card-bt-margin">
+    <div class="ev-md-container ev-panel-title">
+      <div class="row row-lr-margin">
+        <div class="col-sm-12 col-xs-12 col-lr-pad">
+          <h5 class="fw-light">Leader</h5>
+        </div>
+        <div
+          class="col-sm-12 md-body-1 col-lr-pad fs-16 fw-light"
+          [innerHTML]="challenge.leaderboard_description"
+          *ngIf="challenge.leaderboard_description">
+        </div>
+      </div>
+    </div>
+
+    <div class="ev-md-container">
+      <div (click)="refreshLeaderboard()" class="pointer update-page" *ngIf="showLeaderboardUpdate">
+        <span class="text-white">
+          Page is outdated, Click to update&nbsp; <i class="fa fa-refresh text-highlight"></i>
+        </span>
+      </div>
+
+      <!-- 📌 Phase Selection -->
+      <div class="row">
+        <div class="col-sm-6 col-xs-12 col-lg-6 col-lr-pad phase-select-box col-lr-margin">
+          <h6 class="fw-light">Select Phase(s):</h6>
+          <div *ngFor="let phase of filteredPhaseSplits">
+            <mat-checkbox
+              [(ngModel)]="phase.checked"
+              (change)="onPhaseSelectionChange(phase)">
+              {{ phase.challenge_phase_name }} ({{ phase.dataset_split_name }})
+            </mat-checkbox>
+          </div>
+        </div>
+      </div>
+
+      <!-- 📊 Multiple Leaderboards -->
+      <div class="row">
+        <div class="col-sm-12 col-xs-12 col-lr-pad">
+          <div *ngFor="let phaseId of selectedPhaseSplitIds">
+            <h5 class="fw-light mt-4">Leaderboard for Phase {{ phaseId }}</h5>
+
+            <table *ngIf="leaderboardsMap.get(phaseId)?.length > 0" class="centered highlight fw-light">
+              <thead>
+                <tr class="content">
+                  <td class="align-center">
+                    <a (click)="sortNonMetricsColumn('rank', phaseId)">
+                      Rank
+                    </a>
+                  </td>
+                  <td class="align-center">
+                    <a (click)="sortNonMetricsColumn('string', phaseId)">
+                      Participant Team
+                    </a>
+                  </td>
+                  <td *ngFor="let key of leaderboardsMap.get(phaseId)[0].leaderboard__schema.labels; let i = index" class="align-center">
+                    <a (click)="sortMetricsColumn(i, phaseId)">
+                      {{ key }}
+                    </a>
+                  </td>
+                  <td class="align-center">Submitted at</td>
+                  <td *ngIf="showSubmissionMetaAttributesOnLeaderboard">Meta Attributes</td>
+                </tr>
+              </thead>
+
+              <tbody>
+                <tr *ngFor="let entry of leaderboardsMap.get(phaseId)"
+                    (click)="updateHighlightedEntry(initial_ranking[entry.id])"
+                    [ngClass]="highlightedEntry === initial_ranking[entry.id] ? 'highlight-leaderboard' : ''">
+                  
+                  <td>{{ initial_ranking[entry.id] }}</td>
+                  
+                  <td class="fw-light">
+                    {{ entry.submission__participant_team__team_name }}
+                    <span *ngIf="entry.submission__method_name">
+                      ({{ entry.submission__method_name | slice:0:30 }})
+                    </span>
+                    <span *ngIf="entry.submission__is_public === false && isSelectedPhaseLeaderboardPublic" class="private">
+                      <mat-chip-list>
+                        <mat-chip>P</mat-chip>
+                      </mat-chip-list>
+                    </span>
+                    <span *ngIf="entry.submission__is_baseline">
+                      <mat-chip-list>
+                        <mat-chip>B</mat-chip>
+                      </mat-chip-list>
+                    </span>
+                  </td>
+
+                  <td *ngFor="let score of entry.result">
+                    <span *ngIf="score !== '#'">{{ score | number:setLeaderboardPrecisionValue }}</span>
+                    <span *ngIf="score === '#'">#</span>
+                  </td>
+
+                  <td>{{ entry.submission__submitted_at_formatted }}</td>
+
+                  <td *ngIf="showSubmissionMetaAttributesOnLeaderboard">
+                    <button
+                      class="btn ev-btn-dark waves-effect waves-dark grad-btn grad-btn-dark fs-12"
+                      [disabled]="!entry.submission__submission_metadata"
+                      type="submit"
+                      (click)="showMetaAttributesDialog(entry.submission__submission_metadata)">
+                      View
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+
+            <div *ngIf="leaderboardsMap.get(phaseId)?.length === 0">
+              <p class="fw-light">No results to show!</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- <div class="challenge-card">
   <div class="ev-card-panel card-bt-margin">
     <div class="ev-md-container ev-panel-title">
       <div class="row row-lr-margin">
@@ -20,14 +140,16 @@
       </div>
       <div class="row">
         <div class="col-sm-6 col-xs-12 col-lg-6 col-lr-pad phase-select-box col-lr-margin">
-          <app-selectphase
-            [phaseSplits]="filteredPhaseSplits"
-            [phaseSelectionType]="phaseSelectionType"
-            [phaseSelectionListType]="phaseSelectionListType"
-            [selectedPhaseSplitUrlChange]="selectedPhaseSplitUrlChange"
-            #phasesplitselect
-          >
-          </app-selectphase>
+          <div class="multi-phase-select">
+            <h6 class="fw-light">Select Phase(s):</h6>
+            <div *ngFor="let phase of filteredPhaseSplits">
+              <mat-checkbox
+                [(ngModel)]="phase.checked"
+                (change)="onPhaseSelectionChange(phase.id)">
+                {{ phase.challenge_phase_name }} ({{ phase.dataset_split_name }})
+              </mat-checkbox>
+            </div>
+          </div>          
         </div>
       </div>
       <div class="row">
@@ -41,8 +163,8 @@
                     <span class="fw-light">Metric:</span> {{ selectedMetric }} &nbsp;
                   </span>
                 </mat-select-trigger>
-                <mat-option (click)="selectedMetricUrlChange(selectedPhaseSplit, key)" [value]="key" *ngFor="let key of selectedPhaseSplit.leaderboard_schema.labels">
-                  <span class="col-lg-7 col-md-7 col-sm-7 col-xs-7">
+                <mat-option (click)="onMetricSortChange(selectedPhaseSplit.id, key)" [value]="key" *ngFor="let key of selectedPhaseSplit.leaderboard_schema.labels">
+                    <span class="col-lg-7 col-md-7 col-sm-7 col-xs-7">
                     <span class="fw-light">Metric:</span> {{ key }} &nbsp;
                   </span>
                 </mat-option>
@@ -84,7 +206,7 @@
                 </div>
                 <span class="w-400"> {{ sortLeaderboardTextOption }}</span>
               </mat-chip-list> -->
-              </div>
+              <!-- </div>
                 <mat-checkbox
                   class="pull-right complete-leaderboard"
                   *ngIf="isChallengeHost && showLeaderboardToggle && numberOfAllEntries > 0"
@@ -234,4 +356,4 @@
       </div>
     </div>
   </div>
-</div>
+</div> --> -->

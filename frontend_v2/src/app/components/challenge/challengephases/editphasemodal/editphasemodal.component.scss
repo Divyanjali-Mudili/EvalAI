@@ -1,12 +1,10 @@
-@import './mixins.scss';
-@import './variables.scss';
-
+@use 'src/styles/variables' as *;
+@use 'src/styles/mixins' as *;
 .modal-container {
   .modal-card {
     width: 800px;
     max-height: 600px;
     padding: 50px 0px;
-
     .title {
       position: fixed;
       top: 0;
@@ -16,14 +14,12 @@
       width: 100%;
       padding: 15px 20px;
     }
-
     .form {
       max-height: 485px;
       overflow-y: auto;
       overflow-x: hidden;
       padding: 0px 30px;
     }
-
     .buttons {
       position: fixed;
       width: 100%;
@@ -34,17 +30,14 @@
       background: #fff;
       z-index: 99;
     }
-
     .editor-validation-message {
       margin-top: 20px;
     }
-
     .row-lr-margin {
       margin-bottom: 20px;
     }
   }
 }
-
 @include screen-small-medium {
   .modal-container {
     .modal-card {
@@ -52,7 +45,6 @@
     }
   }
 }
-
 @include screen-small {
   .modal-container {
     .modal-card {
@@ -60,11 +52,9 @@
     }
   }
 }
-
 .mt-20 {
   margin-top: 20px;
 }
-
 .mb-20 {
   margin-bottom: 20px;
 }

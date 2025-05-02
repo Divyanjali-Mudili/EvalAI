@@ -1,4 +1,4 @@
-FROM python:3.7.5
+FROM python:3.8.10
 
 ENV PYTHONUNBUFFERED 1
 
@@ -16,5 +16,5 @@ RUN pip install -r dev.txt
 RUN pip install -r worker.txt
 
 ADD . /code
-
+COPY docker/wait-for-it.sh /code/docker/wait-for-it.sh
 CMD ["./docker/wait-for-it.sh", "django:8000", "--", "python", "-m", "scripts.workers.submission_worker"]

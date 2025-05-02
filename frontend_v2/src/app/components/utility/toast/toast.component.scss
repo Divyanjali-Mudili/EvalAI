@@ -1,5 +1,6 @@
-@import './variables.scss';
-@import './mixins.scss';
+@use 'src/styles/variables' as *;
+@use 'src/styles/mixins' as mixins;
+
 
 .toast-container {
   visibility: hidden;
@@ -12,32 +13,35 @@
   right: 0;
   top: 64px;
   box-shadow: none;
+
   .toast-desc {
     padding: 15px 20px;
-    @include box-shadow(0px, 0px, 10px, 5px, $overlay-light);
+    @include mixins.box-shadow(0px, 0px, 10px, 5px, $overlay-light);
+
     .toast-message {
       font-size: $fs-14;
       font-weight: $fw-light;
       margin-left: 8px;
     }
+
     .fa-info,
     .fa-times,
     .fa-check {
       font-size: 15px;
     }
   }
+
   &.show {
     visibility: visible;
-    -webkit-animation: fadein 0.5s, shake 1s 0.5s, shake 1s 0.5s; //stay 5s 1s, shrink 0.5s 2s, fadeout 0.5s 2.5s;
-    animation: fadein 0.5s, shake 1s 0.5s, shake 1s 0.5s; //stay 5s 1s, shrink 0.5s 4s, fadeout 0.5s 4.5s;
+    animation: fadein 0.5s, shake 1s 0.5s, shake 1s 0.5s;
     width: 350px;
     transition: width 0.5s;
     transition-delay: 1.5s;
+
     .toast-desc {
       visibility: visible;
       transition: visibility 0s;
       transition-delay: 1.5s;
-      -webkit-animation: showpls 0s 1s;
       animation: showpls 0s 1s;
     }
   }
@@ -45,12 +49,14 @@
 
 .toast-desc {
   word-break: initial;
+
   &.toast-success {
     background-color: $green-med;
     &:hover {
       background-color: $green-med;
     }
   }
+
   &.toast-error {
     background-color: $med-red;
     &:hover {
@@ -66,14 +72,16 @@
   }
 }
 
-@include screen-small {
+@include mixins.screen-small {
   .toast-container {
     &.show {
       min-width: 300px;
     }
+
     .toast-desc {
       margin-left: -15px;
       min-width: 250px;
+
       .toast-message {
         max-width: 250px;
       }
@@ -81,7 +89,7 @@
   }
 }
 
-@include keyframes(fadein) {
+@include mixins.keyframes(fadein) {
   from {
     bottom: 0;
     opacity: 0;
@@ -97,18 +105,15 @@
   90% {
     transform: translate3d(-1px, 0, 0);
   }
-
   20%,
   80% {
     transform: translate3d(2px, 0, 0);
   }
-
   30%,
   50%,
   70% {
     transform: translate3d(-4px, 0, 0);
   }
-
   40%,
   60% {
     transform: translate3d(4px, 0, 0);

@@ -1,9 +1,9 @@
-@import './variables.scss';
-@import './mixins.scss';
+@use 'src/styles/variables' as *;
+@use 'src/styles/mixins' as *;
+
 
 .ev-md-container {
   padding-bottom: 0px;
-
   .phase-title {
     margin-bottom: 20px;
   }
@@ -46,7 +46,6 @@
 .pad-top {
   padding-top: 40px;
   padding-bottom: 10px;
-
   .show-on-leaderboard {
     color: rgb(169, 169, 169);
     font-size: 14px;
@@ -60,12 +59,12 @@
   margin-right: 55px;
 }
 
-.cbx:checked~.cbx-label {
+.cbx:checked ~ .cbx-label {
   background: #4caf50;
 }
 
 .collapsible-table {
-  overflow: auto;  
+  overflow: auto;
 }
 
 tr.detail-row {
@@ -73,7 +72,7 @@ tr.detail-row {
   overflow: hidden;
 }
 
-.mat-table{
+.mat-table {
   border-collapse: separate;
 }
 
@@ -87,7 +86,7 @@ tr.detail-row {
 
 .cell-outside {
   padding: 8px;
-  color:rgba(0, 0, 0, 0.87);
+  color: rgba(0, 0, 0, 0.87);
   text-align: center;
 }
 
@@ -125,9 +124,7 @@ tr.element-row:not(.expanded-row):active {
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  border-right-style: solid;
-  border-right-width: 1px;
-  border-right-color: lightgrey;
+  border-right: 1px solid lightgrey;
   margin-left: 30px;
 }
 
@@ -144,9 +141,7 @@ tr.element-row:not(.expanded-row):active {
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  border-right-style: solid;
-  border-right-width: 1px;
-  border-right-color: lightgrey;
+  border-right: 1px solid lightgrey;
   margin-left: 30px;
 }
 
@@ -174,20 +169,16 @@ tr.element-row:not(.expanded-row):active {
   }
 
   .elements-detail {
-    border-right-style: none;
+    border-right: none;
     padding-right: 0;
-    border-bottom-style: solid;
-    border-bottom-color: lightgrey;
-    border-bottom-width: 1px;
+    border-bottom: 1px solid lightgrey;
     padding-bottom: 20px;
   }
 
   .elements-status {
     padding-left: 0;
-    border-right-style:none;
-    border-bottom-style: solid;
-    border-bottom-color: lightgrey;
-    border-bottom-width: 1px;
+    border-right: none;
+    border-bottom: 1px solid lightgrey;
     padding-bottom: 20px;
     margin-top: 20px;
   }

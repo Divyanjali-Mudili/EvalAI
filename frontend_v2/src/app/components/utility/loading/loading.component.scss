@@ -1,4 +1,4 @@
-@import 'styles/variables';
+@use 'src/styles/variables' as *;
 
 .loader-container {
   position: fixed;
@@ -9,7 +9,6 @@
   z-index: 5;
   background-color: transparent;
 }
-
 .card-loader-container {
   position: fixed;
   width: 100%;
@@ -26,7 +25,6 @@
     top: 0;
   }
 }
-
 .loader-title {
   margin-top: 39vh;
 }
@@ -65,7 +63,6 @@
   transition: all linear 500ms;
   background: #ffffff96;
 }
-
 @keyframes shift {
   0% {
     left: -3 * $loader-dot-size;

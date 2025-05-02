@@ -1,4 +1,5 @@
-@import 'styles/variables';
+@use 'src/styles/variables' as *;
+
 
 .web-container {
   width: calc(100vw - 223px);
@@ -17,8 +18,8 @@
   margin-top: 2rem;
 }
 
-::-webkit-calendar-picker-indicator:hover{
-  cursor:pointer;
+::-webkit-calendar-picker-indicator:hover {
+  cursor: pointer;
 }
 
 @media only screen and (max-width: $med-screen) {
@@ -27,8 +28,6 @@
   }
 }
 
-@import 'styles/variables';
-
 .ev-challenge-card {
   min-height: 415px;
 }
@@ -36,8 +35,6 @@
 p {
   word-wrap: break-word;
 }
-
-@import 'styles/variables';
 
 .challenge-create-flex {
   display: flex;
@@ -81,7 +78,7 @@ p {
   text-align: center;
   height: 1.5em;
   opacity: 0.5;
-  &:before {
+  &::before {
     content: '';
     background: linear-gradient(to right, transparent, #818078, transparent);
     position: absolute;
@@ -90,7 +87,7 @@ p {
     width: 100%;
     height: 1px;
   }
-  &:after {
+  &::after {
     content: '';
     position: relative;
     display: inline-block;
@@ -108,9 +105,6 @@ p {
     width: 100%;
   }
 }
-
-@import './variables.scss';
-@import './mixins.scss';
 
 .row .row-lr-margin {
   margin-bottom: 20px;

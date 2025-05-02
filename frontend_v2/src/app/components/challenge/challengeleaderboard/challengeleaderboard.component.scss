@@ -1,5 +1,4 @@
-@import './variables.scss';
-@import './mixins.scss';
+@use 'src/styles/variables' as *;
 
 .challenge-leaderboard-container {
   padding: 20px;
@@ -60,30 +59,25 @@
             }
           }
         }
-
         td {
         }
       }
     }
   }
 }
-
 .ev-card-body {
   .row-lr-margin {
     margin-bottom: 20px;
   }
-
   .mat-standard-chip {
     padding: 3px 5px;
     font-size: 16px;
   }
 }
-
 .pull-right {
   margin-left: auto;
   margin-top: -3%;
 }
-
 .btn-switch {
   position: relative;
   display: block;
@@ -93,7 +87,6 @@
   background-color: rgb(167, 163, 163);
   border: 2px solid rgb(167, 163, 163);
   border-radius: 40px;
-
   .btn-switch-circle {
     position: absolute;
     top: 0;
@@ -105,69 +98,56 @@
     border-radius: 40px;
   }
 }
-
 .btn-switch--on {
   background-color: #ffaf4b;
   border: 2px solid #ffaf4b;
-
   .btn-switch-circle--on {
     left: auto;
     right: 0;
   }
 }
-
 .sort-leaderboard-switch {
   vertical-align: middle;
   display: inline-block;
 }
-
 .ev-md-container {
   padding-bottom: 0px;
 }
-
 .complete-leaderboard {
   margin-right: 2%;
 }
-
 .leaderboard-description {
   color: $yellow !important;
   border-radius: 2px !important;
   min-height: 25px !important;
 }
-
 .leaderboard-description-span {
   margin-left: 2%;
 }
-
 .private {
   mat-chip {
     background: rgb(146, 79, 146) !important;
   }
 }
-
 .complete-leaderboard-text {
   font-size: $fs-16;
   color: $gray-darker;
 }
-
 .ev-md-container {
   padding-bottom: 0px;
   .phase-select-box {
     margin-bottom: 0px;
   }
 }
-
 .ev-card-body {
   padding-top: 0px;
 }
-
 @media only screen and (max-width: 485px) {
   .leaderboard-description-span {
     margin-top: 2%;
     margin-left: 0;
   }
 }
-
 .partial-evaluation {
   min-width: 3rem;
   padding: 0 6px;
@@ -177,19 +157,16 @@
   float: left;
   box-sizing: border-box;
 }
-
 .highlight-leaderboard {
-	border-color: #fff3e0;
-	box-shadow: 0 0 0 0.2em #ffcc80 !important;
-	border: 1px solid #d1d5da;
-	border-radius: 3px;
-	background-color: #f2f2f2;
+  border-color: #fff3e0;
+  box-shadow: 0 0 0 0.2em #ffcc80 !important;
+  border: 1px solid #d1d5da;
+  border-radius: 3px;
+  background-color: #f2f2f2;
 }
-
 .hide-label {
   display: none;
 }
-
 .leaderboard-label .description {
   visibility: hidden;
   width: auto;
@@ -200,17 +177,13 @@
   text-align: center;
   border-radius: 6px;
   padding: 10px 10px 10px 10px;
-  font-size: 1.05rem;
-
-  /* Position the tooltip */
+  font-size: 1.05rem; /* Position the tooltip */
   position: absolute;
   z-index: 1;
 }
-
 .leaderboard-label:hover .description {
   visibility: visible;
 }
-
 .horizontal-scroll {
   overflow-x: auto;
 }

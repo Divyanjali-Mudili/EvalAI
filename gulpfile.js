@@ -86,7 +86,7 @@ function css() {
         .pipe(gulp_if(production, rename({ suffix: '.min' })))
         .pipe(sourcemaps.write())
         .pipe(gulp.dest('frontend/dist/css'))
-        pipe(connect.reload());
+        .pipe(connect.reload());
 }
 
 /*
@@ -312,10 +312,14 @@ function startServer() {
 function watch() {
     gulp.watch('frontend/src/js/**/*.js', js);
     gulp.watch('frontend/src/css/**/*.scss', css);
-    gulp.watch('frontend/src/views/web/**/*.html', html);
+    // gulp.watch('frontend/src/views/web/**/*.html', html);
+    gulp.watch('frontend/src/views/web/**/*.html', function() {
+        console.log('HTML file changed');
+        html();
+    });    
     gulp.watch('frontend/src/images/**/*', images);
     gulp.watch('bower_components/materialize/fonts/**/*', fonts);
-    gulp.watch('bower_components/materialize/fonts/**/*', fonts);
+    // gulp.watch('bower_components/materialize/fonts/**/*', fonts);
 }
 
 

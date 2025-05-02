@@ -1,16 +1,14 @@
-@import 'styles/variables';
+@use 'src/styles/variables' as *;
 
 .dashboard-flex {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
 }
-
 .dashboard-content {
   flex: 1;
   min-height: 100vh;
 }
-
 .web-container {
   width: calc(100% - 223px);
   float: right;
@@ -23,7 +21,6 @@
     overflow: hidden;
   }
 }
-
 @media only screen and (max-width: $med-screen) {
   .web-container {
     width: 100%;
