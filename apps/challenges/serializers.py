@@ -94,6 +94,7 @@ class ChallengeSerializer(serializers.ModelSerializer):
             "worker_image_url",
             "worker_instance_type",
             "sqs_retention_period",
+            "github_repository",
         )
 
 
@@ -540,7 +541,8 @@ class PWCChallengeLeaderboardSerializer(serializers.ModelSerializer):
         default_order_by = leaderboard_schema["default_order_by"]
         labels = leaderboard_schema["labels"]
         default_order_by_index = labels.index(default_order_by)
-        # PWC requires the default sorted by metric at the index "0" of the array
+        # PWC requires the default sorted by metric at the index "0" of the
+        # array
         labels.insert(0, labels.pop(default_order_by_index))
         return labels
 
